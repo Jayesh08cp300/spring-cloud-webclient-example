@@ -1,29 +1,24 @@
 package com.example.controller;
 
+import com.example.ExceptionHandler.BookShowException;
 import com.example.entity.BookShow;
-import jakarta.annotation.PostConstruct;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
+@RequiredArgsConstructor
 public class BookShowClientController {
-	private WebClient webClient;
 
-	@PostConstruct
-	public void init() {
-		webClient = WebClient.builder()
-				.baseUrl("http://localhost:9191/api/bookShow")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-				.build();
-	}
+	private final WebClient.Builder webClientBuilder;
 
 	@PostMapping("/")
 	public Mono<String> BookNow(@RequestBody BookShow request) {
-		return webClient.post()
+		return webClientBuilder.build()
+				.post()
 				.uri("/")
 				.syncBody(request)
 				.retrieve()
@@ -32,7 +27,8 @@ public class BookShowClientController {
 
 	@GetMapping("/")
 	public Flux<BookShow> trackAllBooking() {
-		return webClient.get()
+		return webClientBuilder.build()
+				.get()
 				.uri("/")
 				.retrieve()
 				.bodyToFlux(BookShow.class);
@@ -40,15 +36,20 @@ public class BookShowClientController {
 
 	@GetMapping("/{bookingId}")
 	public Mono<BookShow> getBookingById(@PathVariable int bookingId) {
-		return webClient.get()
+		return webClientBuilder.build()
+				.get()
 				.uri("/" + bookingId)
 				.retrieve()
+				.onStatus(HttpStatusCode::is4xxClientError,
+						clientResponse -> Mono.error(new BookShowException(" 404 Unsupported exception")))
+				.onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new BookShowException(" 505 Server exception")))
 				.bodyToMono(BookShow.class);
 	}
 
 	@DeleteMapping("/{bookingId}")
 	public Mono<String> cancelBooking(@PathVariable int bookingId) {
-		return webClient.delete()
+		return webClientBuilder.build()
+				.delete()
 				.uri("/" + bookingId)
 				.retrieve()
 				.bodyToMono(String.class);
@@ -56,7 +57,8 @@ public class BookShowClientController {
 
 	@PutMapping("/{bookingId}")
 	public Mono<BookShow> updateBooking(@PathVariable int bookingId, @RequestBody BookShow request) {
-		return webClient.put()
+		return webClientBuilder.build()
+				.put()
 				.uri("/" + bookingId)
 				.syncBody(request)
 				.retrieve()
