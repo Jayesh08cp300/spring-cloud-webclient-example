@@ -1,2 +1,11 @@
 server:
-  port: 9292
+  port: 9191
+
+spring:
+  application:
+    name: BOOK-SHOW-CLIENT
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

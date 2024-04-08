@@ -10,6 +10,7 @@
     <modules>
         <module>book-show-service</module>
         <module>book-show-client</module>
+        <module>discovery-server</module>
     </modules>
 
     <packaging>pom</packaging>

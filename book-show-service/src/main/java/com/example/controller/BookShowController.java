@@ -2,15 +2,22 @@ package com.example.controller;
 
 import com.example.entity.BookShow;
 import com.example.repository.BookShowRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/api/bookShow")
+@RestController
+@RequestMapping("/api/bookShow")
+@Slf4j
 public class BookShowController {
 	@Autowired
 	private BookShowRepository repository;
+
+	@Autowired
+	private ServletWebServerApplicationContext context;
 
 	@PostMapping("/")
 	public String bookShow(@RequestBody BookShow BookShow) {
@@ -21,6 +28,8 @@ public class BookShowController {
 
 	@GetMapping("/")
 	public List<BookShow> getAllBooking() {
+		log.info("Port -> " + context.getWebServer()
+				.getPort());
 		return repository.findAll();
 	}
 

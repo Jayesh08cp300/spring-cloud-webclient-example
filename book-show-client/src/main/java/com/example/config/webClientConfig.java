@@ -18,7 +18,7 @@ public class webClientConfig {
 	@LoadBalanced
 	public WebClient.Builder webClientBuilder() {
 		return WebClient.builder()
-				.baseUrl("http://localhost:9191/api/bookShow")
+				.baseUrl("http://book-show-service/api/bookShow")
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 				.filter(logRequest())
 				.filter(logResponse());

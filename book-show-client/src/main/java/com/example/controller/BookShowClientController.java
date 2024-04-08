@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/bookShow")
 public class BookShowClientController {
 
 	private final WebClient.Builder webClientBuilder;
